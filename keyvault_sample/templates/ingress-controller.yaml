@@ -1,0 +1,33 @@
+metadata:
+  labels:
+    azure.workload.identity/use: "true"
+serviceAccount: 
+    create: false
+    name: "${serviceaccount_name}"
+controller:
+    replicaCount: 1       
+    nodeSelector:
+        kubernetes.io/os: linux
+    ingressClassResource:
+        name: "${ingress_class_name}" # default: nginx
+        enabled: true
+        default: false
+        controllerValue: "k8s.io/ingress-${ingress_class_name}"
+    service:
+        enableTLSPassthrough: true
+        annotations:
+            service.beta.kubernetes.io/azure-load-balancer-health-probe-request-path: healthz
+    extraVolumes:
+      - name: secrets-store01-inline
+        csi:
+          driver: secrets-store.csi.k8s.io
+          readOnly: true
+          volumeAttributes:
+            secretProviderClass: ${secret_provider_class_name}
+    extraVolumeMounts:
+      - name: secrets-store01-inline
+        mountPath: "/mnt/secrets-store"
+        readOnly: true
+defaultBackend:
+  nodeSelector:
+    kubernetes.io/os: linux
