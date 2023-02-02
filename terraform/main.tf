@@ -6,7 +6,7 @@ resource "azurerm_resource_group" "main" {
 }
 
 module "public_aks_cluster" {
-  source = "github.com/libralmy/aks-public-cluster"
+  source = "../publicAKS"
 
   resource_group_name = azurerm_resource_group.main.name
   
